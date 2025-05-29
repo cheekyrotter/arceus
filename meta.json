@@ -1,0 +1,16 @@
+{
+	"id": "arceus",
+	"name": "Arceus",
+	"author": ["cheekyrotter"],
+	"version": "0.1.0",
+	"description": "Library/util mod adding batch/safe loading, safe calculations and version checking.",
+	"prefix": "arceus",
+	"main_file": "main.lua",
+	"priority": -99999,
+	"badge_colour": "952322",
+	"badge_text_colour": "FFFFFF",
+	"dependencies": [
+        "Steamodded (>=1.*)",
+		"Lovely (>=0.6)"
+    ]
+}
