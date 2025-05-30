@@ -21,7 +21,7 @@ function Arceus.safe_load(name) -- Attempts to load the given file, does not cra
     local success, result = xpcall(function() assert(SMODS.load_file(name))() end, debug.traceback)
     if not success then
         sendErrorMessage("Safe Load | Caught error:"..result)
-        Arceus.fl.failed_files[#Arceus.fl.failed_files + 1] = {mod.path..name, result}
+        Arceus.fl.failed_files[#Arceus.fl.failed_files + 1] = {file = mod.path..name, error = result}
         return nil
     end
     Arceus.fl.successes = Arceus.fl.successes + 1
@@ -36,7 +36,6 @@ function Arceus.batch_load(folder) -- Loads all files in the given folder (by de
     
     local mod = Arceus.get_mod()
     if not mod then
-        sendErrorMessage(Arceus.prfx.."Batch Load | Can't even find the mod using this, what the hell??")
         local ofs = Arceus.fl.other_fails
         ofs[#ofs + 1] = "Batch Load | Can't find current mod (literally no idea how this could happen)"
         return false
@@ -50,6 +49,13 @@ function Arceus.batch_load(folder) -- Loads all files in the given folder (by de
     end
 
     local data_folder = Arceus.get_config_entry("data_folder")
+    if not NFS.getInfo(mod.path..data_folder) then
+        sendErrorMessage(Arceus.prfx.."Auto Load | Can't find data folder, mod: "..mod.id..", folder given: "..data_folder)
+        local ofs = Arceus.fl.other_fails
+        ofs[#ofs + 1] = "Auto Load | Can't find data folder, mod: "..mod.id..", folder given: "..data_folder
+        return false
+    end
+
     local full_path = mod.path..data_folder..folder
     local items = NFS.getDirectoryItems(full_path)
     sendInfoMessage(folder)
@@ -64,10 +70,11 @@ function Arceus.batch_load(folder) -- Loads all files in the given folder (by de
     return true
 end
 
+
+
 function Arceus.auto_load() -- Runs batch_load for all files in the data subfolders (by default would be your_mod/data/)
     local mod = Arceus.get_mod()
     if not mod then
-        sendErrorMessage(Arceus.prfx.."Auto Load | Can't even find the mod using this, what the hell??")
         local ofs = Arceus.fl.other_fails
         ofs[#ofs + 1] = "Auto Load | Can't find current mod (literally no idea how this could happen)"
         return false
@@ -82,6 +89,7 @@ function Arceus.auto_load() -- Runs batch_load for all files in the data subfold
         return false
     end
     local items = NFS.getDirectoryItems(mod.path..data_folder)
+
 
     for _, item in pairs(items) do
         local full_path = mod.path..data_folder..item

@@ -2,6 +2,7 @@ Arceus.default_conf = {
     data_folder = "data/",
     crossmod_folder = "crossmod/",
     crossmod_in_data = true,
+    auto_load_exclude = {},
     safe_calc = true
 }
 
@@ -18,13 +19,10 @@ function Arceus.get_mod()
     return mod
 end
 
+
 function Arceus.create_config()
-    print("Create config")
-    local mod = SMODS.current_mod
-    if not mod then
-        sendErrorMessage(Arceus.prfx.."Mod Utils | Can't even find the mod using this, what the hell??")
-        return nil
-    end
+    local mod = Arceus.get_mod()
+    if not mod then return nil end
 
     if not mod.arceus_config then
         mod.arceus_config = Arceus.default_conf
@@ -40,12 +38,10 @@ function Arceus.create_config()
     return true
 end
 
+
 function Arceus.get_config_entry(entry)
-    local mod = SMODS.current_mod
-    if not mod then
-        sendErrorMessage(Arceus.prfx.."Mod Utils | Can't even find the mod using this, what the hell??")
-        return nil
-    end
+    local mod = Arceus.get_mod()
+    if not mod then return nil end
 
     if not mod.arceus_config or not mod.arceus_config.created then 
         Arceus.create_config()
