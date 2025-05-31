@@ -10,9 +10,9 @@ function Arceus.get_mod()
     local mod = SMODS.current_mod
     if not mod then
         sendErrorMessage(Arceus.prfx.."Mod Utils | Can't even find the mod using this, what the hell??")
-        return nil
+        return false
     end
-    if not mod.arceus_config or not mod.arceus_config.created then 
+    if not not mod.arceus_config.created then 
         Arceus.create_config()
     end
 
@@ -21,19 +21,18 @@ end
 
 
 function Arceus.create_config()
-    local mod = Arceus.get_mod()
-    if not mod then return nil end
+    local mod = SMODS.current_mod
+    if not mod then return false end
 
     if not mod.arceus_config then
         mod.arceus_config = Arceus.default_conf
     end
-
-    for name, value in ipairs(Arceus.default_conf) do
+     
+    for name, value in pairs(Arceus.default_conf) do
         if not mod.arceus_config[name] then
             mod.arceus_config[name] = Arceus.default_conf[name]
         end
     end
-
     mod.arceus_config.created = true
     return true
 end
@@ -41,9 +40,9 @@ end
 
 function Arceus.get_config_entry(entry)
     local mod = Arceus.get_mod()
-    if not mod then return nil end
+    if not mod then return false end
 
-    if not mod.arceus_config or not mod.arceus_config.created then 
+    if not mod.arceus_config.created then 
         Arceus.create_config()
     end
     
@@ -51,7 +50,7 @@ function Arceus.get_config_entry(entry)
 
     if not config[entry] then
         sendErrorMessage(Arceus.prefix.."Mod Utils | Failed to get config entry"..mod.id..": "..entry)
-        return nil
+        return false
     end
     return config[entry]
 end
