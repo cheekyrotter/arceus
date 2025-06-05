@@ -4,6 +4,7 @@ Arceus.prfx = "{Arceus} "
 -- I won't use bulk loading in this library because getting it to work with itself seems like a pain
 assert(SMODS.load_file("scripts/mod_utils.lua"))()
 assert(SMODS.load_file("scripts/file_loading.lua"))()
+assert(SMODS.load_file("scripts/safe_calculate.lua"))()
 
 SMODS.Keybind {
     key_pressed = "k",
