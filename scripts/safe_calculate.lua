@@ -1,8 +1,10 @@
-function Arceus.safe_call(func, self, context, extra_arg)
+function Arceus.safe_call(func, name, self, context, extra_arg)
     local result = nil
-    local success, result = pcall(function() return func(self, context) end)
+    local STP = loadStackTracePlus()
+    local success, result = xpcall(function() return func(self, context) end, STP.stacktrace)
     if not success then
-        sendErrorMessage("Caught error:"..result)
+        local error_mesage = "Error in card '"..self.config.center.key.."' using function '"..name.."'"
+        Arceus.error_popup({{summary = error_mesage, traceback = result}})
         SMODS.calculate_effect({message = "Fatal error, removing card!", colour = G.C.RED}, self)
         G.E_MANAGER:add_event(Event({
             func = function() 
@@ -24,7 +26,7 @@ for _, name in pairs(methods) do
     sendInfoMessage("ADDING METHOD ", name)
     Card[name] = function(card, arg1, arg2)
         if card.config.center.mod and Arceus.get_config_entry("safe_calc", card.config.center.mod) == true then
-            return Arceus.safe_call(original, card, arg1, arg2)
+            return Arceus.safe_call(original, name, card, arg1, arg2)
         else
             return original(card, arg1, arg2)
         end
