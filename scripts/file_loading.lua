@@ -1,27 +1,26 @@
 Arceus.fl = {}
 Arceus.fl.failed_files = {}
-Arceus.fl.other_fails = {}
+Arceus.fl.other_fails = 0
 Arceus.fl.successes = 0
 
 function Arceus.safe_load(name) -- Attempts to load the given file, does not crash if this failes
     local mod = Arceus.get_mod()
     if not mod then
         sendErrorMessage(Arceus.prfx.."Safe Load | Can't even find the mod using this, what the hell??")
-        local ofs = Arceus.fl.other_fails
-        ofs[#ofs + 1] = "Safe Load | Can't find current mod (literally no idea how this could happen)"
+        Arceus.fl.other_fails = Arceus.fl.other_fails + 1
         return false
     end
 
     if not name then
         sendErrorMessage(Arceus.prfx..mod.id.."Safe Load | File argument not given")
-        local ofs = Arceus.fl.other_fails
-        ofs[#ofs + 1] = "Safe Load | No file argument given, mod: "..mod.id
+        Arceus.fl.other_fails = Arceus.fl.other_fails + 1
         return false
     end
-    local success, result = xpcall(function() assert(SMODS.load_file(name))() end, debug.traceback)
+    local STP = loadStackTracePlus()
+    local success, result = xpcall(function() assert(SMODS.load_file(name))() end, STP.stacktrace)
     if not success then
         sendErrorMessage("Safe Load | Caught error loading "..name..", mod: "..mod.id)
-        Arceus.fl.failed_files[#Arceus.fl.failed_files + 1] = {file = mod.path..name, error = result}
+        Arceus.fl.failed_files[#Arceus.fl.failed_files + 1] = {file = mod.id.."/"..name, error = result}
         return nil
     end
     Arceus.fl.successes = Arceus.fl.successes + 1
@@ -37,15 +36,13 @@ function Arceus.batch_load(folder, in_data) -- Loads all files in the given fold
 
     local mod = Arceus.get_mod()
     if not mod then
-        local ofs = Arceus.fl.other_fails
-        ofs[#ofs + 1] = "Batch Load | Can't find current mod (literally no idea how this could happen)"
+        Arceus.fl.other_fails = Arceus.fl.other_fails + 1
         return false
     end
 
     if not folder then
         sendErrorMessage(Arceus.prfx..mod.id.."Batch Load | File argument not given")
-        local ofs = Arceus.fl.other_fails
-        ofs[#ofs + 1] = "Batch Load | File argument not given, mod: "..mod.id
+        Arceus.fl.other_fails = Arceus.fl.other_fails + 1
         return false
     end
 
@@ -56,8 +53,7 @@ function Arceus.batch_load(folder, in_data) -- Loads all files in the given fold
         local data_folder = Arceus.get_config_entry("data_folder")
         if not NFS.getInfo(mod.path..data_folder) then
             sendErrorMessage(Arceus.prfx.."Batch Load | Can't find data folder, mod: "..mod.id..", folder given: "..data_folder)
-            local ofs = Arceus.fl.other_fails
-            ofs[#ofs + 1] = "Batch Load | Can't find data folder, mod: "..mod.id..", folder given: "..data_folder
+            Arceus.fl.other_fails = Arceus.fl.other_fails + 1
             return false
         end
         full_path = mod.path..data_folder..folder
@@ -81,15 +77,14 @@ function Arceus.auto_load() -- Runs batch_load for all files in the data subfold
     local mod = Arceus.get_mod()
     if not mod then
         local ofs = Arceus.fl.other_fails
-        ofs[#ofs + 1] = "Auto Load | Can't find current mod (literally no idea how this could happen)"
+        Arceus.fl.other_fails = Arceus.fl.other_fails + 1
         return false
     end
 
     local data_folder = Arceus.get_config_entry("data_folder")
     if not NFS.getInfo(mod.path..data_folder) then
         sendErrorMessage(Arceus.prfx.."Auto Load | Can't find data folder, mod: "..mod.id..", folder given: "..data_folder)
-        local ofs = Arceus.fl.other_fails
-        ofs[#ofs + 1] = "Auto Load | Can't find data folder, mod: "..mod.id..", folder given: "..data_folder
+        Arceus.fl.other_fails = Arceus.fl.other_fails + 1
         return false
     end
     local items = NFS.getDirectoryItems(mod.path..data_folder)
@@ -138,8 +133,7 @@ end
 function Arceus.crossmod_load() -- Called by auto_load, loads any applicable crossmod folders 
     local mod = Arceus.get_mod()
     if not mod then
-        local ofs = Arceus.fl.other_fails
-        ofs[#ofs + 1] = "Crossmod Load | Can't find current mod (literally no idea how this could happen)"
+        Arceus.fl.other_fails = Arceus.fl.other_fails + 1
         return false
     end
 
@@ -153,8 +147,7 @@ function Arceus.crossmod_load() -- Called by auto_load, loads any applicable cro
     if in_data then full_path = mod.path..Arceus.get_config_entry("data_folder")..folder end
     if not NFS.getInfo(full_path) then
         sendErrorMessage(Arceus.prfx.."Crossmod Load | Can't find crossmod folder, mod: "..mod.id..", folder given: "..full_path)
-        local ofs = Arceus.fl.other_fails
-        ofs[#ofs + 1] = "Crossmod Load | Can't find crossmod folder, mod: "..mod.id..", folder given: "..full_path
+        Arceus.fl.other_fails = Arceus.fl.other_fails + 1
         return false
     end
     local items = NFS.getDirectoryItems(full_path)
@@ -171,4 +164,28 @@ function Arceus.crossmod_load() -- Called by auto_load, loads any applicable cro
     sendInfoMessage(Arceus.prfx.."Crossmod Load | Finished crossmod loading for "..mod.id)
     return true
 
+end
+
+local main_menu_ref = Game.main_menu
+---@diagnostic disable-next-line: duplicate-set-field
+Game.main_menu = function(change_context)
+    local ret = main_menu_ref(change_context)
+    local errors = {}
+    if next(Arceus.fl.failed_files) ~= nil then
+        for _, value in ipairs(Arceus.fl.failed_files) do
+            local summary = "Failed to load file: "..value.file
+            error = {summary = summary, traceback = value.error}
+            table.insert(errors, error)
+        end
+    end
+
+    if Arceus.fl.other_fails > 0 then
+        print("other errors")
+        error = {summary = Arceus.fl.other_fails.." other loading errors (see console)"}
+        table.insert(errors, error)
+    end
+    if next(errors) ~= nil then
+        Arceus.error_popup(errors)
+    end
+    return ret
 end

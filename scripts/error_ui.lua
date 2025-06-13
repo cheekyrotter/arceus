@@ -9,13 +9,9 @@ end
 function Arceus.error_ui_definition(menuname, errors)
     local error_nodes = {}
     for i, error in ipairs(errors) do
-        local node = {n=G.UIT.R, config={ 
-            align = "cl", 
-            padding = 0.2,
-            colour = G.C.UI.BACKGROUND_DARK,
-            r = 1 }, 
-            nodes={
-                {n=G.UIT.C, 
+        local nodes = {}
+        if error.summary then
+            table.insert(nodes, {n=G.UIT.C, 
                     config={
                         align = "cl",
                         minw = 8,
@@ -30,8 +26,10 @@ function Arceus.error_ui_definition(menuname, errors)
                     }
                     }
                 }
-                },
-                {n=G.UIT.C, 
+                })
+        end
+        if error.traceback then
+            table.insert(nodes, {n=G.UIT.C, 
                     config={
                         align = "cm",
                         minw = 2,
@@ -49,11 +47,18 @@ function Arceus.error_ui_definition(menuname, errors)
                                 button = "arceus_error_copy",
                         })
                         }
-                } 
-                
+                } )
+        end
+        local base_node = {n=G.UIT.R, config={ 
+            align = "cl", 
+            padding = 0.2,
+            colour = G.C.UI.BACKGROUND_DARK,
+            r = 1,
+            minh = 1
+        }, 
+            nodes = nodes
         }
-        }
-        table.insert(error_nodes, node)
+        table.insert(error_nodes, base_node)
     end
 
     return(
@@ -71,7 +76,7 @@ function Arceus.error_ui_definition(menuname, errors)
                 }, 
                 nodes={
                     {n = G.UIT.R, config={ align = "cm"}, nodes ={
-                        {n = G.UIT.C, config = {align = "cm", padding = 0.2}, nodes = {
+                        {n = G.UIT.C, config = {align = "cm"}, nodes = {
                         {n=G.UIT.R, 
                             config={
                                 align = "cm"
@@ -89,7 +94,8 @@ function Arceus.error_ui_definition(menuname, errors)
                         },
                         {n=G.UIT.R, 
                             config={
-                                align = "cl"
+                                align = "cl",
+                                padding = 0.2
                             }, 
                             nodes={
                             {
@@ -108,7 +114,7 @@ function Arceus.error_ui_definition(menuname, errors)
                                 align = "cm"
                             }, 
                             nodes={
-                                {n = G.UIT.C, config = {align = "cm"}, nodes = error_nodes
+                                {n = G.UIT.C, config = {align = "cm", padding = 0.2}, nodes = error_nodes
                             }
                             }
                         }

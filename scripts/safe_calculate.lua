@@ -3,16 +3,16 @@ function Arceus.safe_call(func, name, self, context, extra_arg)
     local STP = loadStackTracePlus()
     local success, result = xpcall(function() return func(self, context) end, STP.stacktrace)
     if not success then
-        local error_mesage = "Error in card '"..self.config.center.key.."' using function '"..name.."'"
-        Arceus.error_popup({{summary = error_mesage, traceback = result}})
-        SMODS.calculate_effect({message = "Fatal error, removing card!", colour = G.C.RED}, self)
-        G.E_MANAGER:add_event(Event({
-            func = function() 
-                self.getting_sliced = true
-                self:start_dissolve()
-                return true
-            end
-        }))
+        local error_message = "Error in card '"..self.config.center.key.."' using function '"..name.."'"
+        Arceus.error_popup({{summary = error_message, traceback = result}})
+        -- SMODS.calculate_effect({message = "Fatal error, removing card!", colour = G.C.RED}, self)
+        -- G.E_MANAGER:add_event(Event({
+        --     func = function() 
+        --         self.getting_sliced = true
+        --         self:start_dissolve()
+        --         return true
+        --     end
+        -- }))
     end
     return(result)
 end
