@@ -28,7 +28,7 @@ function Arceus.error_ui_definition(menuname, errors)
                 }
                 })
         end
-        if error.traceback then
+        if error.traceback and error.traceback ~= nil then
             table.insert(nodes, {n=G.UIT.C, 
                     config={
                         align = "cm",
@@ -63,7 +63,7 @@ function Arceus.error_ui_definition(menuname, errors)
 
     return(
         {n=G.UIT.ROOT, config = {
-            align = 'cm', r = 0.1, padding = 0.06, colour = G.C.L_BLACK}, nodes={
+            align = 'cm', r = 0.1, colour = G.C.L_BLACK}, nodes={
             {
                 n=G.UIT.R, 
                 config={
@@ -117,7 +117,25 @@ function Arceus.error_ui_definition(menuname, errors)
                                 {n = G.UIT.C, config = {align = "cm", padding = 0.2}, nodes = error_nodes
                             }
                             }
+                        },
+                        {n=G.UIT.R, 
+                            config={
+                                align = "cm"
+                            }, 
+                            nodes={
+                                UIBox_button({
+                                label = {"Close"},
+                                col = true,
+                                colour = G.C.ORANGE,
+                                scale = 0.5,
+                                minw = 4,
+                                minh = 0.8,
+                                ref_table = { traceback = error.traceback },
+                                button = "exit_overlay_menu",
+                            })
+                            }
                         }
+                        
                     }
                     }
                     }
@@ -129,6 +147,7 @@ function Arceus.error_ui_definition(menuname, errors)
     }
     )
 end
+
 
 function G.FUNCS.arceus_error_copy(e)
     love.system.setClipboardText(e.config.ref_table.traceback)

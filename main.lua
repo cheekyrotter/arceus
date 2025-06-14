@@ -1,12 +1,12 @@
 Arceus = SMODS.current_mod
-Arceus.prfx = "{Arceus} "
+Arceus.msg_prefix = "{Arceus} "
 
--- I won't use bulk loading in this library because getting it to work with itself seems like a pain
-assert(SMODS.load_file("scripts/mod_utils.lua"))()
-assert(SMODS.load_file("scripts/file_loading.lua"))()
-assert(SMODS.load_file("scripts/safe_calculate.lua"))()
-assert(SMODS.load_file("scripts/error_ui.lua"))()
-
+-- I won't use the mod's batch loading as getting it to work with itself seems like a pain
+local scripts = {"mod_utils", "file_loading", "safe_calculate", "error_ui", "config_tab"}
+for _, v in pairs(scripts) do
+    print(v)
+    assert(SMODS.load_file("scripts/"..v..".lua"))()
+end
 
 SMODS.Keybind {
     key_pressed = "e",
@@ -16,45 +16,14 @@ SMODS.Keybind {
 }
 
 
-local config = Arceus.config
-local arc_enabled = copy_table(config)
+Arceus.create_config_tab({
+    {type = "toggle", label = "Enable Broken Jokers for Error Testing", key = "testing_mode", restart = true},
+    {type = "toggle", label = "Destroy Cards Causing Errors", key = "remove_cards"},
+    {type = "toggle", label = "Force Safe Calculate for All Mods", key = "force_safe"},
+})
 
-local function config_matching()
-	for k, v in pairs(arc_enabled) do
-		if v ~= config[k] then
-			return false
-		end
-	end
-	return true
+if Arceus.config.testing_mode == true then 
+    Arceus.batch_load("tests/") 
+    Arceus.batch_load("fake")
+    Arceus.batch_load() 
 end
-
-function G.FUNCS.arceus_restart()
-	if config_matching() then
-		SMODS.full_restart = 0
-	else
-		SMODS.full_restart = 1
-	end
-end
-
-SMODS.current_mod.config_tab = function()
-    -- Once again I have borrowed code from Garbshit, thank you Garb
-    local config_nodes = {{n=G.UIT.R, config={align = "cm"}, nodes={
-        {n=G.UIT.O, config={object = DynaText({string = "Options:", colours = {G.C.WHITE}, shadow = true, scale = 0.4})}},}},
-        create_toggle({label = "Enable Broken Testing Jokers (Requires Restart)", ref_table = config, ref_value = "testing_mode", callback = G.FUNCS.arceus_restart,})
-    }
-    return {
-        n = G.UIT.ROOT,
-        config = {
-            emboss = 0.05,
-            minh = 6,
-            r = 0.1,
-            minw = 10,
-            align = "cm",
-            padding = 0.2,
-            colour = G.C.BLACK
-        },
-        nodes = config_nodes
-    }  
-end
-
-if config.testing_mode == true then Arceus.batch_load("tests/") Arceus.batch_load() end

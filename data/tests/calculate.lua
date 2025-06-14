@@ -28,9 +28,8 @@ SMODS.Joker {
     rarity = 3,
 
     calculate = function(self, card, context)
-
-        if context.final_scoring_step then
-            print(test)
+        if context.joker_main then
+            alkjdalkjsd()
         end
     end
     
