@@ -1,10 +1,10 @@
-function Arceus.safe_call(func, name, self, context, extra_arg)
+function Arceus.safe_call(func, name, self, context, extra_arg) -- Wrapper for card-based functions
     local result = nil
     local STP = loadStackTracePlus()
     local success, result = xpcall(function() return func(self, context) end, STP.stacktrace)
     if not success then
         local error_message = "Error in card '"..self.config.center.key.."' using function '"..name.."'"
-        Arceus.error_popup({{summary = error_message, traceback = result}})
+        Arceus.make_overlay(Arceus.error_popup_ui({{summary = error_message, traceback = result}}))
         if Arceus.config.remove_cards == true then
             SMODS.calculate_effect({message = "Fatal error, removing card!", colour = G.C.RED}, self)
             G.E_MANAGER:add_event(Event({

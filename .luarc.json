@@ -1,11 +1,15 @@
 {
 	"$schema": "https://raw.githubusercontent.com/LuaLS/vscode-lua/master/setting/schema.json",
-	"workspace.library": [".lib/Balatro", "c:/Users/georg/AppData/Roaming/Balatro/Mods/Steamodded"],
+	"workspace.library": [".lib/Balatro", "c:/Users/georg/AppData/Roaming/Balatro/Mods/Steamodded", "lsp_def/"],
 	"runtime.version": "LuaJIT",
     "diagnostics.disable": [
-        "param-type-mismatch"
+        "param-type-mismatch",
+        "duplicate-set-field"
     ],
     "diagnostics.globals": [
         "love"
+    ],
+    "Lua.workspace.ignoreDir": [
+        "lsp_def/"
     ]
 }

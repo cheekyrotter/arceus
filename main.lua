@@ -2,9 +2,8 @@ Arceus = SMODS.current_mod
 Arceus.msg_prefix = "{Arceus} "
 
 -- I won't use the mod's batch loading as getting it to work with itself seems like a pain
-local scripts = {"mod_utils", "file_loading", "safe_calculate", "error_ui", "config_tab"}
+local scripts = {"mod_utils", "menu_queue", "file_loading", "safe_calculate", "error_ui", "config_tab"}
 for _, v in pairs(scripts) do
-    print(v)
     assert(SMODS.load_file("scripts/"..v..".lua"))()
 end
 

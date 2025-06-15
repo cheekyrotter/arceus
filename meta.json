@@ -3,7 +3,7 @@
 	"name": "Arceus",
 	"author": ["cheekyrotter"],
 	"version": "0.1.0",
-	"description": "Library/util mod adding batch/safe loading, safe calculations and version checking.",
+	"description": "Library/util mod primarily aiming to playtesting and development smoother",
 	"prefix": "arceus",
 	"main_file": "main.lua",
 	"priority": -999999,

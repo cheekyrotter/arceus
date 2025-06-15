@@ -17,8 +17,9 @@ function G.FUNCS.arceus_restart(data) -- Checks if the config matches, and if a 
 	end
 end
 
-function Arceus.create_config_tab(args)
+function Arceus.create_config_tab(args) -- Creates the config tab for your mod from the given options (see repo for examples)
     local mod = SMODS.current_mod
+    if not mod then return end
     local mod_config = mod.config
     mod.config_copy = copy_table(mod_config)
     mod.menu_args = args
@@ -47,7 +48,6 @@ function Arceus.create_config_tab(args)
             end
         end
 
-        -- local config_nodes = {{n = G.UIT.R, config = {align = "cm"}, nodes = config_nodes}}
         return {
             n = G.UIT.ROOT,
             config = {

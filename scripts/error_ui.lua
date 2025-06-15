@@ -1,12 +1,4 @@
-function Arceus.error_popup(errors)
-    local menu = G.FUNCS.overlay_menu({
-        definition = Arceus.error_ui_definition("arceus_error", errors),
-        config = {align='cm', major = G.ROOM_ATTACH, bond = 'Strong'},
-        pause = true
-    })
-end
-
-function Arceus.error_ui_definition(menuname, errors)
+function Arceus.error_popup_ui(errors)
     local error_nodes = {}
     for i, error in ipairs(errors) do
         local nodes = {}
@@ -85,7 +77,7 @@ function Arceus.error_ui_definition(menuname, errors)
                             {
                                 n=G.UIT.T, 
                                 config = {
-                                    text = "Oopsie!", 
+                                    text = "Ouch!", 
                                     colour = G.C.RED, 
                                     scale = 0.6
                                 }
@@ -130,7 +122,6 @@ function Arceus.error_ui_definition(menuname, errors)
                                 scale = 0.5,
                                 minw = 4,
                                 minh = 0.8,
-                                ref_table = { traceback = error.traceback },
                                 button = "exit_overlay_menu",
                             })
                             }

@@ -1,6 +1,7 @@
 Arceus.fl = {}
 Arceus.fl.fails = {}
 Arceus.fl.successes = 0
+Arceus.fl.popup = false
 
 Arceus.fl.processes = {
     safe = "Safe Load",
@@ -76,7 +77,7 @@ function Arceus.batch_load(folder, in_data) -- Loads all files in the given fold
     if in_data then
         local data_folder = Arceus.get_config_entry("data_folder")
         if not NFS.getInfo(mod.path..data_folder) then
-            Arceus.file_load_error("missing_folder", "batch", nil, data_folder)
+            Arceus.file_load_error("missing_folder", "batch", nil, mod.id.."/"..data_folder)
             return false
         end
         full_path = mod.path..data_folder..folder
@@ -84,7 +85,7 @@ function Arceus.batch_load(folder, in_data) -- Loads all files in the given fold
     end
 
     if not NFS.getInfo(full_path) then
-        Arceus.file_load_error("missing_folder", "batch", nil, folder)
+        Arceus.file_load_error("missing_folder", "batch", nil, mod.id.."/"..folder)
         return false
     end
 
@@ -111,7 +112,7 @@ function Arceus.auto_load() -- Runs batch_load for all files in the data subfold
 
     local data_folder = Arceus.get_config_entry("data_folder")
     if not NFS.getInfo(mod.path..data_folder) then
-        Arceus.file_load_error("missing_folder", "auto", nil, data_folder)
+        Arceus.file_load_error("missing_folder", "auto", nil, mod.id.."/"..data_folder)
         return false
     end
     local items = NFS.getDirectoryItems(mod.path..data_folder)
@@ -171,9 +172,10 @@ function Arceus.crossmod_load() -- Called by auto_load, loads any applicable cro
     end
 
     local full_path = mod.path..folder
-    if in_data then full_path = mod.path..Arceus.get_config_entry("data_folder")..folder end
+    local data_folder = Arceus.get_config_entry("data_folder")
+    if in_data then full_path = mod.path..data_folder..folder end
     if not NFS.getInfo(full_path) then
-        Arceus.file_load_error("missing_folder", "crossmod", nil, Arceus.get_config_entry("data_folder")..folder)
+        Arceus.file_load_error("missing_folder", "crossmod", nil, mod.id.."/"..data_folder..folder)
         return false
     end
     local items = NFS.getDirectoryItems(full_path)
@@ -192,21 +194,17 @@ function Arceus.crossmod_load() -- Called by auto_load, loads any applicable cro
 
 end
 
-local main_menu_ref = Game.main_menu
----@diagnostic disable-next-line: duplicate-set-field
-Game.main_menu = function(change_context)
-    local ret = main_menu_ref(change_context)
-    local errors = {}
+Arceus.add_menu_hook(function(change_context)
 
-    if next(Arceus.fl.fails) ~= nil then
+    if next(Arceus.fl.fails) ~= nil and Arceus.fl.popup == false then
+        local errors = {}
         for _, value in ipairs(Arceus.fl.fails) do
             error = {summary = value.summary, traceback = value.traceback}
             table.insert(errors, error)
         end
+        local popup = Arceus.error_popup_ui(errors)
+        Arceus.add_menu_popup(popup)
+        Arceus.fl.popup = true
     end
 
-    if next(errors) ~= nil then
-        Arceus.error_popup(errors)
-    end
-    return ret
-end
+end)
