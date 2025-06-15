@@ -15,14 +15,14 @@ This is primarily for developers to reduce disruption during testing playtesting
 ## Disclaimer
 
 This mod is untested, so ironically this may cause crashes I haven't thought of.
-If you encounter any problems,
-
-## Demos
-
-
+If you encounter any problems, contact me on Discord at `cheekyrotter` (you can add me or ping me from the official Arceus thread in the modding forum on the Balatro server).
 
 ## For Users
 
+Currently, mods can decide if they want to use the "safe calculate" options, on their cards, however you can forcefully enable it for all cards from the Arceus configuration menu.
+
+![joker error](assets/demos/joker_error.png)
+![config menu](assets/demos/config.png)
 
 
 ## For Developers
@@ -47,6 +47,11 @@ SMODS.current_mod.arceus_config {
     crossmod_in_data = true,
     auto_load_exclude = {},
     safe_calc = true
-}```
+}
+```
 
 Crossmod loading works by reading each folder name (e.g. crossmod/Cryptid/) and checking if the corresponding mod is loaded.
+
+File loading errors appear as follows:
+
+![file loading error](assets/demos/file_errors.png)
