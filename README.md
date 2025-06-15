@@ -6,6 +6,8 @@ This is a library/utility mod that adds:
 - Auto loading all data files (including semi-automatic crossmod detection)
 - Optional error handling for joker functions
 - Error UI that provides full tracebacks (currently only for the features mentioned above)
+- Menu UI popup queue
+- Easier menu hook system
 - [UNFINISHED] Config menu maker
 - [UNFINISHED] Checking for updates for mods
 - [PLANNED] Centralised achievement menu
