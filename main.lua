@@ -10,7 +10,7 @@ end
 SMODS.Keybind {
     key_pressed = "e",
     action = function()
-        Arceus.error_popup({{summary = "test1", traceback = "test"}, {summary = "test2"}})
+        create_UIBox_generic_options({Arceus.error_popup_ui({{summary = "test1", traceback = "test"}, {summary = "test2"}})})
     end
 }
 
@@ -20,6 +20,14 @@ Arceus.create_config_tab({
     {type = "toggle", label = "Destroy Cards Causing Errors", key = "remove_cards"},
     {type = "toggle", label = "Force Safe Calculate for All Mods", key = "force_safe"},
 })
+
+Arceus.create_config_tab({
+    {type = "toggle", label = "Toggle", key = "toggle_1"},
+    {type = "toggle", label = "Another Toggle", key = "toggle_2", restart = true},
+    {type = "slider", label = "Slider 1", key = "slider_1", config = {max = 100, min = 0}},
+    {type = "slider", label = "Slider 2", key = "slider_2", config = {max = 1, min = 0, places = 1}},
+},
+{label = "Demo", description = "Config maker demo", table = Arceus.config.dummy_config})
 
 if Arceus.config.testing_mode == true then 
     Arceus.batch_load("tests/") 

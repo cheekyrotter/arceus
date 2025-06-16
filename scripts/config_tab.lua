@@ -17,35 +17,54 @@ function G.FUNCS.arceus_restart(data) -- Checks if the config matches, and if a 
 	end
 end
 
-function Arceus.create_config_tab(args) -- Creates the config tab for your mod from the given options (see repo for examples)
+function Arceus.create_config_tab(entries, settings) -- Creates the config tab for your mod from the given options (see repo for examples)
     local mod = SMODS.current_mod
     if not mod then return end
     local mod_config = mod.config
+ 
     mod.config_copy = copy_table(mod_config)
-    mod.menu_args = args
-    
-    
 
-    mod.config_tab = function()
+    settings = settings or {}
+    settings.extra = settings.extra or false
+    if mod.config_tab then settings.extra = true end
+    settings.label = settings.label or "Config"
+    settings.description = settings.description or "Options:"
+
+    local config_table = settings.table or mod_config
+    
+    local definition = function()
         local config_nodes = {}
 
-        for _, value in pairs(mod.menu_args) do
+        for _, value in pairs(entries) do
             if not value.type then break end
-            value.label = value.label or "[Label Missing]"
+            local label = value.label or "[Label Missing]"
+            if value.restart == true then label = label.." (Requires Restart)" end
             value.restart = value.restart or false
-            if value.type == "toggle" then
-                local config = {label = value.label, ref_table = mod_config, ref_value = value.key}
-                if value.restart == true then
-                    config.callback = function()
-                        G.FUNCS.arceus_restart({
-                            mod = mod
-                        })
-                    end
-                    config.label = config.label.." (Requires Restart)"
+            -- if value.    table == nil then value.table = mod_config end
+
+            local node = {}
+            local config = {label = label, ref_table = config_table, ref_value = value.key}
+            if value.restart == true then
+                config.callback = function()
+                    G.FUNCS.arceus_restart({
+                        mod = mod
+                    })
                 end
-                local node = create_toggle(config)
-                table.insert(config_nodes, node)
             end
+            if value.type == "toggle" then
+                node = create_toggle(config)
+                -- node.nodes[1].config.align = "cm"
+                node.nodes[2].config.align = "cm"
+                node.nodes[1].config.minw = 0.5
+                
+            elseif value.type == "slider" then
+                config.min = value.config.min
+                config.max = value.config.max
+                config.decimal_places = value.config.places or 0
+                config.w = 4
+                node = create_slider(config)
+            end
+            table.insert(config_nodes, node)
         end
 
         return {
@@ -68,7 +87,7 @@ function Arceus.create_config_tab(args) -- Creates the config tab for your mod f
                         {
                             n=G.UIT.O, 
                             config={
-                                object = DynaText({string = "Options:", colours = {G.C.WHITE}, shadow = true, scale = 0.4})
+                                object = DynaText({string = settings.description, colours = {G.C.WHITE}, shadow = true, scale = 0.5})
                             }
                         }
                     }
@@ -81,10 +100,25 @@ function Arceus.create_config_tab(args) -- Creates the config tab for your mod f
                             n = G.UIT.C,
                             config = {align = "cm"},
                             nodes = config_nodes
+                            
                         }
                     }
                 }
             }
-        }  
+        }
+    end
+    if settings.extra == false then
+        mod.config_tab = definition
+    else
+        local extra_tabs = {}
+        if mod.extra_tabs then extra_tabs = mod.extra_tabs() end
+        local tab = {
+			label = settings.label,
+			tab_definition_function = definition,
+		}
+        table.insert(extra_tabs, tab)
+        mod.extra_tabs = function()
+            return extra_tabs
+        end
     end
 end
