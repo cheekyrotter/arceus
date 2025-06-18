@@ -6,10 +6,9 @@ This is a library/utility mod that adds:
 - Auto loading all data files (including semi-automatic crossmod detection)
 - Optional error handling for joker functions
 - Error UI that provides full tracebacks (currently only for the features mentioned above)
-- Menu UI popup queue
-- Easier menu hook system
-- [UNFINISHED] Config menu maker
-- [UNFINISHED] Checking for updates for mods
+- Config menu maker (needs a few adjustments currently)
+- [NOT FULLY IMPLEMENTED] Menu UI popup queue
+- [NOT FULLY IMPLEMENTED] Easier menu hook system
 - [PLANNED] Centralised achievement menu
 
 This is primarily for developers to reduce disruption during testing playtesting.
