@@ -7,5 +7,7 @@ return {
 		["toggle_2"] = false,
 		["slider_1"] = 50,
 		["slider_2"] = 0.5,
+		["input"] = "Value",
+		["cycle"] = 1
 	}
 }

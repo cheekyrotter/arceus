@@ -2,7 +2,7 @@
 	"id": "arceus",
 	"name": "Arceus",
 	"author": ["cheekyrotter"],
-	"version": "0.1.0",
+	"version": "0.2.0",
 	"description": "Library/util mod primarily aiming to playtesting and development smoother",
 	"prefix": "arceus",
 	"main_file": "main.lua",

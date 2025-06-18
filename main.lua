@@ -26,6 +26,8 @@ Arceus.create_config_tab({
     {type = "toggle", label = "Another Toggle", key = "toggle_2", restart = true},
     {type = "slider", label = "Slider 1", key = "slider_1", config = {max = 100, min = 0}},
     {type = "slider", label = "Slider 2", key = "slider_2", config = {max = 1, min = 0, places = 1}},
+    {type = "input", label = "Input", key = "input"},
+    {type = "cycle", label = "Option Cycle", key = "cycle", cycles = {"Test 1", "Test 2", "Test 3"}},
 },
 {label = "Demo", description = "Config maker demo", table = Arceus.config.dummy_config})
 

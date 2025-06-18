@@ -24,12 +24,12 @@ If you encounter any problems, contact me on Discord at `cheekyrotter` (you can 
 Currently, mods can decide if they want to use the "safe calculate" options, on their cards, however you can forcefully enable it for all cards from the Arceus configuration menu.
 
 ![joker error](assets/demos/joker_error.png)
-![config menu](assets/demos/config.png)
+![config menu](assets/demos/config_main.png)
 
 
 ## For Developers
 
-I will work on documentation soon, but for now here is a list of available functions (each have LSP definitions for Visual Studio Code).
+I will work on documentation soon, but for now here is a list of available functions. Each have full LSP definitions for Visual Studio Code, which while provide full descriptions and autocomplete for each entry.
 
 ```lua
 Arceus.add_menu_hook(func)
@@ -38,6 +38,7 @@ Arceus.make_overlay(ui)
 Arceus.safe_load(name)
 Arceus.batch_load(folder, in_data)
 Arceus.auto_load()
+Arceus.create_config_tab(entries, settings)
 ```
 
 The settings for your mod can be configured as follow (the default settings if left unchanged):
@@ -57,3 +58,31 @@ Crossmod loading works by reading each folder name (e.g. crossmod/Cryptid/) and 
 File loading errors appear as follows:
 
 ![file loading error](assets/demos/file_errors.png)
+
+
+Config menus are made as follows:
+
+```lua
+Arceus.create_config_tab({
+    {type = "toggle", label = "Enable Broken Jokers for Error Testing", key = "testing_mode", restart = true},
+    {type = "toggle", label = "Destroy Cards Causing Errors", key = "remove_cards"},
+    {type = "toggle", label = "Force Safe Calculate for All Mods", key = "force_safe"},
+})
+
+Arceus.create_config_tab({
+    {type = "toggle", label = "Toggle", key = "toggle_1"},
+    {type = "toggle", label = "Another Toggle", key = "toggle_2", restart = true},
+    {type = "slider", label = "Slider 1", key = "slider_1", config = {max = 100, min = 0}},
+    {type = "slider", label = "Slider 2", key = "slider_2", config = {max = 1, min = 0, places = 1}},
+    {type = "input", label = "Input", key = "input"},
+    {type = "cycle", label = "Option Cycle", key = "cycle", cycles = {"Test 1", "Test 2", "Test 3"}},
+},
+{label = "Demo", description = "Config maker demo", table = Arceus.config.dummy_config})
+```
+
+This would result in the config menu earlier and the following:
+
+![config demo](assets/demos/config_demo.png)
+
+
+It currently supports toggles, sliders, cycles, and text inputs (WARNING: text inputs are currently not functional and I cannot figure out why, will fix later), as well as extra tabs and using custom tables in place of normal config. Visual customisation options will come later. 

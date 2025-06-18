@@ -14,6 +14,8 @@
 ---@field table? table The table that the key belongs to (your mod's config by default)
 ---@field restart? boolean Whether the game should restart if this is changed
 ---@field config? ConfigConfig Extra config for the type given
+---@field label_scale? integer Scale for the label text (by default 0.5)
+---@field cycles? string[] The labels to cycle between for the "cycle" option (cycles change the setting to the index of the cycle)
 
 ---@class ConfigConfig
 ---@field min? number
