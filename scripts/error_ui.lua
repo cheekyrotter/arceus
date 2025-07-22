@@ -53,22 +53,11 @@ function Arceus.error_popup_ui(errors)
         table.insert(error_nodes, base_node)
     end
 
-    return(
-        {n=G.UIT.ROOT, config = {
-            align = 'cm', r = 0.1, colour = G.C.L_BLACK}, nodes={
+    return(create_UIBox_generic_options(
             {
-                n=G.UIT.R, 
-                config={
-                    align = "cm", 
-                    minw = 10,
-                    padding = 0.3,
-                    r = 0.1, 
-                    outline_colour = G.C.UI.OUTLINE_LIGHT, 
-                    outline = 1.5
-                }, 
-                nodes={
-                    {n = G.UIT.R, config={ align = "cm"}, nodes ={
-                        {n = G.UIT.C, config = {align = "cm"}, nodes = {
+                
+                contents = {
+                    
                         {n=G.UIT.R, 
                             config={
                                 align = "cm"
@@ -110,32 +99,12 @@ function Arceus.error_popup_ui(errors)
                             }
                             }
                         },
-                        {n=G.UIT.R, 
-                            config={
-                                align = "cm"
-                            }, 
-                            nodes={
-                                UIBox_button({
-                                label = {"Close"},
-                                col = true,
-                                colour = G.C.ORANGE,
-                                scale = 0.5,
-                                minw = 4,
-                                minh = 0.8,
-                                button = "exit_overlay_menu",
-                            })
-                            }
-                        }
+                            
                         
                     }
-                    }
-                    }
-                }
-            },
-            
-        }
-        }
-    }
+                }     
+        
+        )
     )
 end
 
