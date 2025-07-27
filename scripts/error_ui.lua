@@ -21,25 +21,27 @@ function Arceus.error_popup_ui(errors)
                 })
         end
         if error.traceback and error.traceback ~= nil then
-            table.insert(nodes, {n=G.UIT.C, 
+            table.insert(nodes, 
+                {n=G.UIT.C, 
                     config={
                         align = "cm",
                         minw = 2,
                         maxw = 2
                     }, 
-                        nodes = {
-                            UIBox_button({
-                                label = {"Copy Error"},
-                                col = true,
-                                colour = G.C.RED,
-                                scale = 0.5,
-                                minw = 2,
-                                minh = 0.6,
-                                ref_table = { traceback = error.traceback },
-                                button = "arceus_error_copy",
+                    nodes = {
+                        UIBox_button({
+                            label = {"Copy Error"},
+                            col = true,
+                            colour = G.C.RED,
+                            scale = 0.5,
+                            minw = 2,
+                            minh = 0.6,
+                            ref_table = { traceback = error.traceback },
+                            button = "arceus_error_copy",
                         })
-                        }
-                } )
+                    }
+                }
+            )
         end
         local base_node = {n=G.UIT.R, config={ 
             align = "cl", 
